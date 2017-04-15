@@ -1,4 +1,4 @@
-package edu.uci.ics.crawler4j.tests;
+package edu.uci.ics.crawler4j.tests.html;
 
 import edu.uci.ics.crawler4j.url.WebURL;
 import org.junit.Test;

@@ -68,7 +68,7 @@ public class RobotstxtServer {
             return true;
         }
         try {
-            URL url = new URL(webURL.getURL());
+            URL url = new URL(webURL.getUrl());
             String host = getHost(url);
             String path = url.getPath();
 
@@ -85,10 +85,10 @@ public class RobotstxtServer {
             }
             return directives.allows(path);
         } catch (MalformedURLException e) {
-            logger.error("Bad URL in Robots.txt: " + webURL.getURL(), e);
+            logger.error("Bad URL in Robots.txt: " + webURL.getUrl(), e);
         }
 
-        logger.warn("RobotstxtServer: default: allow", webURL.getURL());
+        logger.warn("RobotstxtServer: default: allow", webURL.getUrl());
         return true;
     }
 
@@ -139,10 +139,10 @@ public class RobotstxtServer {
                 } else {
                     logger.warn(
                         "Can't read this robots.txt: {}  as it is not written in plain text, " + "contentType: {}",
-                        robotsTxtUrl.getURL(), page.getContentType());
+                        robotsTxtUrl.getUrl(), page.getContentType());
                 }
             } else {
-                logger.debug("Can't read this robots.txt: {}  as it's status code is {}", robotsTxtUrl.getURL(),
+                logger.debug("Can't read this robots.txt: {}  as it's status code is {}", robotsTxtUrl.getUrl(),
                     fetchResult.getStatusCode());
             }
         } catch (SocketException | UnknownHostException | SocketTimeoutException | NoHttpResponseException se) {
@@ -150,10 +150,10 @@ public class RobotstxtServer {
             // which is perfectly ok
             logger.trace("robots.txt probably does not exist.", se);
         } catch (PageBiggerThanMaxSizeException pbtms) {
-            logger.error("Error occurred while fetching (robots) url: {}, {}", robotsTxtUrl.getURL(),
+            logger.error("Error occurred while fetching (robots) url: {}, {}", robotsTxtUrl.getUrl(),
                 pbtms.getMessage());
         } catch (Exception e) {
-            logger.error("Error occurred while fetching (robots) url: " + robotsTxtUrl.getURL(), e);
+            logger.error("Error occurred while fetching (robots) url: " + robotsTxtUrl.getUrl(), e);
         } finally {
             if (fetchResult != null) {
                 fetchResult.discardContentIfNotConsumed();

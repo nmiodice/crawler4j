@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package edu.uci.ics.crawler4j.examples.localdata;
+package edu.uci.ics.crawler4j.tests.localdata;
 
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
@@ -43,7 +43,7 @@ public class LocalDataCollectorCrawler extends WebCrawler {
 
     @Override
     public boolean shouldVisit(Page referringPage, WebURL url) {
-        String href = url.getURL()
+        String href = url.getUrl()
             .toLowerCase();
         return !FILTERS.matcher(href)
             .matches() && href.startsWith("http://www.ics.uci.edu/");
@@ -52,7 +52,7 @@ public class LocalDataCollectorCrawler extends WebCrawler {
     @Override
     public void visit(Page page) {
         logger.info("Visited: {}", page.getWebURL()
-            .getURL());
+            .getUrl());
         myCrawlStat.incProcessedPages();
 
         if (page.getParseData() instanceof HtmlParseData) {

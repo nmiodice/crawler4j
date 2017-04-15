@@ -78,7 +78,7 @@ public class PageFetchResult {
             return true;
         } catch (Exception e) {
             logger.info("Exception while fetching content for: {} [{}]", page.getWebURL()
-                .getURL(), e.getMessage());
+                .getUrl(), e.getMessage());
         }
         return false;
     }

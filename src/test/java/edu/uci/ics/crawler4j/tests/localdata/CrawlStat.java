@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package edu.uci.ics.crawler4j.examples.localdata;
+package edu.uci.ics.crawler4j.tests.localdata;
 
 public class CrawlStat {
     private int totalProcessedPages;

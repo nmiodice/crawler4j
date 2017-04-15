@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package edu.uci.ics.crawler4j.examples.localdata;
+package edu.uci.ics.crawler4j.tests.localdata;
 
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.Page;
@@ -84,11 +84,11 @@ public class Downloader {
                 Page page = new Page(curURL);
                 fetchResult.fetchContent(page, pageFetcher.getConfig()
                     .getMaxDownloadSize());
-                parser.parse(page, curURL.getURL());
+                parser.parse(page, curURL.getUrl());
                 return page;
             }
         } catch (Exception e) {
-            logger.error("Error occurred while fetching url: " + curURL.getURL(), e);
+            logger.error("Error occurred while fetching url: " + curURL.getUrl(), e);
         } finally {
             if (fetchResult != null) {
                 fetchResult.discardContentIfNotConsumed();

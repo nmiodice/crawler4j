@@ -1,4 +1,4 @@
-package edu.uci.ics.crawler4j.examples.fetcher;
+package edu.uci.ics.crawler4j.tests.fetcher;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;

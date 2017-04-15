@@ -208,7 +208,7 @@ public class WebCrawler implements Runnable {
      * @param webUrl URL which content failed to be fetched
      */
     protected void onContentFetchError(WebURL webUrl) {
-        logger.warn("Can't fetch content of: {}", webUrl.getURL());
+        logger.warn("Can't fetch content of: {}", webUrl.getUrl());
         // Do nothing by default (except basic logging)
         // Sub-classed can override this to add their custom functionality
     }
@@ -219,7 +219,7 @@ public class WebCrawler implements Runnable {
      * @param webUrl URL where a unhandled exception occured
      */
     protected void onUnhandledException(WebURL webUrl, Throwable e) {
-        String urlStr = (webUrl == null ? "NULL" : webUrl.getURL());
+        String urlStr = (webUrl == null ? "NULL" : webUrl.getUrl());
         logger.warn("Unhandled exception while fetching {}: {}", urlStr, e.getMessage());
         logger.info("Stacktrace: ", e);
         // Do nothing by default (except basic logging)
@@ -232,7 +232,7 @@ public class WebCrawler implements Runnable {
      * @param webUrl URL which failed on parsing
      */
     protected void onParseError(WebURL webUrl) {
-        logger.warn("Parsing error of: {}", webUrl.getURL());
+        logger.warn("Parsing error of: {}", webUrl.getUrl());
         // Do nothing by default (Except logging)
         // Sub-classed can override this to add their custom functionality
     }
@@ -254,9 +254,8 @@ public class WebCrawler implements Runnable {
     public void run() {
         onStart();
         while (true) {
-            List<WebURL> assignedURLs = new ArrayList<>(50);
             isWaitingForNewURLs = true;
-            frontier.getNextURLs(50, assignedURLs);
+            List<WebURL> assignedURLs = frontier.getNextURLs();
             isWaitingForNewURLs = false;
             if (assignedURLs.isEmpty()) {
                 if (frontier.isShutdown()) {
@@ -363,7 +362,6 @@ public class WebCrawler implements Runnable {
                         .isFollowRedirects()) {
                         WebURL webURL = new WebURL();
                         webURL.setURL(movedToUrl);
-                        webURL.setParentDocid(curURL.getParentDocid());
                         webURL.setParentUrl(curURL.getParentUrl());
                         webURL.setDepth(curURL.getDepth());
                         webURL.setAnchor(curURL.getAnchor());
@@ -372,10 +370,10 @@ public class WebCrawler implements Runnable {
                                 frontier.schedule(webURL);
                             } else {
                                 logger.debug("Not visiting: {} as per the server's \"robots.txt\" policy",
-                                    webURL.getURL());
+                                    webURL.getUrl());
                             }
                         } else {
-                            logger.debug("Not visiting: {} as per your \"shouldVisit\" policy", webURL.getURL());
+                            logger.debug("Not visiting: {} as per your \"shouldVisit\" policy", webURL.getUrl());
                         }
                     }
                 } else { // All other http codes other than 3xx & 200
@@ -386,11 +384,11 @@ public class WebCrawler implements Runnable {
                         .getContentType() == null ? "" : fetchResult.getEntity()
                         .getContentType()
                         .getValue();
-                    onUnexpectedStatusCode(curURL.getURL(), fetchResult.getStatusCode(), contentType, description);
+                    onUnexpectedStatusCode(curURL.getUrl(), fetchResult.getStatusCode(), contentType, description);
                 }
 
             } else { // if status code is 200
-                if (!curURL.getURL()
+                if (!curURL.getUrl()
                     .equals(fetchResult.getFetchedUrl())) {
                     curURL.setURL(fetchResult.getFetchedUrl());
                 }
@@ -404,10 +402,10 @@ public class WebCrawler implements Runnable {
                     logger.warn(
                         "Warning: unknown page size exceeded max-download-size, truncated to: " + "({}), at URL: {}",
                         myController.getConfig()
-                            .getMaxDownloadSize(), curURL.getURL());
+                            .getMaxDownloadSize(), curURL.getUrl());
                 }
 
-                parser.parse(page, curURL.getURL());
+                parser.parse(page, curURL.getUrl());
 
                 if (shouldFollowLinksIn(page.getWebURL())) {
                     ParseData parseData = page.getParseData();
@@ -425,19 +423,19 @@ public class WebCrawler implements Runnable {
                     logger.debug(
                         "Not looking for links in page {}, " + "as per your \"shouldFollowLinksInPage\" policy",
                         page.getWebURL()
-                            .getURL());
+                            .getUrl());
                 }
                 visit(page);
             }
         } catch (PageBiggerThanMaxSizeException e) {
-            onPageBiggerThanMaxSize(curURL.getURL(), e.getPageSize());
+            onPageBiggerThanMaxSize(curURL.getUrl(), e.getPageSize());
         } catch (ParseException pe) {
             onParseError(curURL);
         } catch (ContentFetchException cfe) {
             onContentFetchError(curURL);
         } catch (NotAllowedContentException nace) {
             logger.debug("Skipping: {} as it contains binary content which you configured not to crawl",
-                curURL.getURL());
+                curURL.getUrl());
         } catch (Exception e) {
             onUnhandledException(curURL, e);
         } finally {

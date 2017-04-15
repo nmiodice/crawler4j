@@ -17,11 +17,9 @@
 
 package edu.uci.ics.crawler4j.crawler;
 
-import com.google.common.io.Files;
-import com.sleepycat.je.Environment;
-import com.sleepycat.je.EnvironmentConfig;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.frontier.Frontier;
+import edu.uci.ics.crawler4j.frontier.FrontierFactory;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 import edu.uci.ics.crawler4j.url.TLDList;
 import edu.uci.ics.crawler4j.url.URLCanonicalizer;
@@ -42,7 +40,6 @@ public class CrawlController extends Configurable {
 
     static final Logger logger = LoggerFactory.getLogger(CrawlController.class);
     protected final Object waitingLock = new Object();
-    protected final Environment env;
     /**
      * The 'customData' object can be used for passing custom crawl-related
      * configurations to different components of the crawler.
@@ -74,11 +71,7 @@ public class CrawlController extends Configurable {
 
         TLDList.setUseOnline(config.isOnlineTldListUpdate());
 
-        EnvironmentConfig envConfig = new EnvironmentConfig();
-        envConfig.setAllowCreate(true);
-
-        env = new Environment(Files.createTempDir(), envConfig);
-        frontier = new Frontier(config);
+        frontier = FrontierFactory.newInMemoryFrontier();
 
         this.pageFetcher = pageFetcher;
         this.robotstxtServer = robotstxtServer;
@@ -217,21 +210,10 @@ public class CrawlController extends Configurable {
                                     }
                                     if (!someoneIsWorking) {
                                         if (!shuttingDown) {
-                                            long queueLength = 1;
-                                            if (queueLength > 0) {
-                                                continue;
-                                            }
-                                            logger.info("No thread is working and no more URLs are in "
-                                                + "queue waiting for another " + config.getThreadShutdownDelaySeconds()
-                                                + " seconds to make sure...");
-                                            sleep(config.getThreadShutdownDelaySeconds());
-                                            queueLength = 1;
-                                            if (queueLength > 0) {
-                                                continue;
-                                            }
+                                            continue;
                                         }
 
-                                        logger.info("All of the crawlers are stopped. Finishing the " + "process...");
+                                        logger.info("All of the crawlers are stopped. Finishing the process...");
                                         // At this step, frontier notifies the threads that were
                                         // waiting for new URLs and they should stop
                                         frontier.shutdown();
@@ -249,8 +231,6 @@ public class CrawlController extends Configurable {
 
                                         finished = true;
                                         waitingLock.notifyAll();
-                                        env.close();
-
                                         return;
                                     }
                                 }
@@ -317,7 +297,6 @@ public class CrawlController extends Configurable {
      * which get the same document ids as the previous crawl.
      *
      * @param pageUrl the URL of the seed
-     * @param docId   the document id that you want to be assigned to this seed URL.
      */
     public void addSeed(String pageUrl) {
         String canonicalUrl = URLCanonicalizer.getCanonicalURL(pageUrl);
@@ -402,11 +381,7 @@ public class CrawlController extends Configurable {
 
         @Override
         public T newInstance() throws Exception {
-            try {
-                return clazz.newInstance();
-            } catch (ReflectiveOperationException e) {
-                throw e;
-            }
+            return clazz.newInstance();
         }
     }
 }

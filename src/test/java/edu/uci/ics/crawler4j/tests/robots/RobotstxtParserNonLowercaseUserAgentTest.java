@@ -1,4 +1,4 @@
-package edu.uci.ics.crawler4j.tests;
+package edu.uci.ics.crawler4j.tests.robots;
 
 import edu.uci.ics.crawler4j.robotstxt.HostDirectives;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;

@@ -1,4 +1,4 @@
-package edu.uci.ics.crawler4j.examples.fetcher;
+package edu.uci.ics.crawler4j.tests.fetcher;
 
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.exceptions.PageBiggerThanMaxSizeException;
@@ -20,7 +20,7 @@ public class PageFetcherHtmlOnly extends PageFetcher {
     @Override
     public PageFetchResult fetchPage(WebURL webUrl)
         throws InterruptedException, IOException, PageBiggerThanMaxSizeException {
-        String toFetchURL = webUrl.getURL();
+        String toFetchURL = webUrl.getUrl();
 
         PageFetchResult fetchResult = new PageFetchResult();
         HttpHead head = null;

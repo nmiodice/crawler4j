@@ -230,7 +230,7 @@ public class PageFetcher extends Configurable {
         throws InterruptedException, IOException, PageBiggerThanMaxSizeException {
         // Getting URL, setting headers & content
         PageFetchResult fetchResult = new PageFetchResult();
-        String toFetchURL = webUrl.getURL();
+        String toFetchURL = webUrl.getUrl();
         HttpUriRequest request = null;
         try {
             request = newHttpUriRequest(toFetchURL);
